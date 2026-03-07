@@ -86,7 +86,7 @@ void visTask(Task *head, Persona *head_p) {
 	Persona *cur_p = head_p;
 	
 	while (cur != NULL) {
-		printf("TITOLO: %s | DESCRIZIONE: %s | NEXT: %u\n", cur->titolo, cur->descrizione, (void*)cur->next);
+		printf("TITOLO: %s | DESCRIZIONE: %s | NEXT: %p\n", cur->titolo, cur->descrizione, (void*)cur->next);
 		
 		while (cur_p != NULL) {
 			if (cur->per_chi == cur_p) {
