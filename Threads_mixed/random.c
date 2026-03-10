@@ -15,11 +15,11 @@ void* saluta(void *arg);
 void* boh(void *arg);
 void* caricaArray(Numeri **head);
 void *visualizza(Numeri *head);
+void* banana(void *arg);
+void* cipolla(void *arg);
 
 int main() {
-	Numeri *head = malloc(sizeof(Numeri));
-	caricaArray(&head);
-	visualizza(head);
+	Numeri *head = NULL;
 	pthread_t primo, secondo;
 	pthread_t terzo, quattro;
 	pid_t pid;
@@ -30,11 +30,41 @@ int main() {
 		return 0;
 	} else if (pid == 0) {
 		printf("SONO IL PROCESSO FIGLIO:\n");
-		pthread_create(&primo, NULL, pari, head);
-		pthread_create(&secondo, NULL, dispari, head);
-		
-		pthread_join(primo, NULL);
-		pthread_join(secondo, NULL);
+		pid_t pid2;
+		pid2 = fork();
+
+		if (pid2 < 0) {
+			printf("Errore nel fork\n");
+			exit(0);
+		} else if (pid2 == 0) {
+			printf("SONO IL FIGLIO DEL FIGLIO:\n");
+			pthread_t sub_u, sub_d;
+			pthread_create(&sub_u, NULL, banana, NULL);
+			pthread_create(&sub_d, NULL, cipolla, NULL);
+			
+			pthread_join(sub_u, NULL);
+			pthread_join(sub_d, NULL);
+
+			exit(0);
+		} else {
+			caricaArray(&head);
+			printf("SONO IL PADRE DEL FIGLIO:\n");
+			visualizza(head);
+			pthread_create(&primo, NULL, pari, head);
+			pthread_create(&secondo, NULL, dispari, head);
+			
+			pthread_join(primo, NULL);
+			pthread_join(secondo, NULL);
+
+			Numeri *cur = head;
+			
+			while (cur != NULL) {
+				Numeri *temp = cur;
+				cur = cur->next;
+				free(temp);
+			}
+			wait(NULL);
+		}
 		
 		exit(0);
 	} else {
@@ -46,14 +76,6 @@ int main() {
 		pthread_join(quattro, NULL);
 		
 		wait(NULL);
-	}
-	
-	Numeri *cur = head;
-	
-	while (cur != NULL) {
-		Numeri *temp = cur;
-		cur = cur->next;
-		free(temp);
 	}
 	
 	return 0;
@@ -125,5 +147,19 @@ void* dispari(void *arg) {
 		cur = cur->next;
 	}
 	
+	pthread_exit(0);
+}
+
+void* banana(void *arg) {
+	for (int i = 0; i < 10; i++) {
+		printf("BANANA\n");
+	}
+	pthread_exit(0);
+}
+
+void* cipolla(void *arg) {
+	for (int i = 0; i < 10; i++) {
+		printf("CIPOLLA\n");
+	}
 	pthread_exit(0);
 }
