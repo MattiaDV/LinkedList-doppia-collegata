@@ -45,7 +45,7 @@ int main() {
 		pthread_join(terzo, NULL);
 		pthread_join(quattro, NULL);
 		
-		exit(0);
+		wait(NULL);
 	}
 	
 	Numeri *cur = head;
