@@ -1,0 +1,24 @@
+{
+  "name": "linkedlist-doppia-collegata",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MattiaDV/LinkedList-doppia-collegata.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MattiaDV/LinkedList-doppia-collegata/issues"
+  },
+  "homepage": "https://github.com/MattiaDV/LinkedList-doppia-collegata#readme",
+  "description": "",
+  "dependencies": {
+    "express": "^5.2.1",
+    "node": "^22.22.1"
+  }
+}
