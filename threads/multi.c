@@ -1,9 +1,40 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+
+typedef struct MAXER {
+    int min;
+    int max;
+} MAXER;
+
+void* welcome(void *arg) {
+    MAXER* max = (MAXER*)arg;
+    int num = max->min;
+
+    for (int i = 0; i < max->max; i++) {
+        num = max->min;
+        num = num * i;
+        printf("Moltiplicazione per numero: %d\n", num);
+    }
+}
+
+void* divi(void *arg) {
+    MAXER* max = (MAXER*)arg;
+    int num = max->min;
+
+    for (int i = 0; i < max->max; i++) {
+        num = max->min;
+        num = num + i;
+        printf("Somma per numero: %d\n", num);
+    }
+}
 
 void* even(void *arg) {
-    for (int i = 0; i < 11; i++) {
+    MAXER* max = (MAXER*)arg;
+    for (int i = max->min; i < max->max; i++) {
         if (i % 2 == 0) {
             printf("PARI: %d\n", i);
         }
@@ -13,7 +44,8 @@ void* even(void *arg) {
 }
 
 void* odd(void *arg) {
-    for (int i = 0; i < 11; i++) {
+    MAXER* max = (MAXER*)arg;
+    for (int i = max->min; i < max->max; i++) {
         if (i % 2 != 0) {
             printf("DISPARI: %d\n", i);
         }
@@ -24,12 +56,30 @@ void* odd(void *arg) {
 
 int main() {
     pthread_t prima, seconda;
+    pthread_t mol, som;
+    MAXER *max = malloc(sizeof(MAXER));
+    pid_t pid = fork();
 
-    pthread_create(&prima, NULL, even, NULL);
-    pthread_create(&seconda, NULL, odd, NULL);
+    max->min = 10;
+    max->max = 101;
 
-    pthread_join(prima, NULL);
-    pthread_join(seconda, NULL);
+    if (pid == 0) {
+        pthread_create(&mol, NULL, welcome, max);
+        pthread_create(&som, NULL, divi, max);
+
+        pthread_join(mol, NULL);
+        pthread_join(som, NULL);
+        exit(0);
+    } else {
+        pthread_create(&prima, NULL, even, max);
+        pthread_create(&seconda, NULL, odd, max);
+
+        pthread_join(prima, NULL);
+        pthread_join(seconda, NULL);
+        wait(NULL);
+    }
+
+    free(max);
 
     return 0;
 }
