@@ -18,7 +18,7 @@ typedef struct SingleFS {
 
 void addSingleFS(SingleFS **head, const char *fn, const char *dn, const char *fp);
 void createFile(const char *fn, const char *dn, const char *fp);
-void delSingleFile(SingleFS **head, const char *filename);
+void delSingleFS(SingleFS **head, const char *filename);
 void delFile(const char *filepath);
 
 int main() {
@@ -26,7 +26,7 @@ int main() {
     addSingleFS(&sfs, "test.txt", "test", "test/test.txt");
     addSingleFS(&sfs, "secondo.txt", "test", "test/secondo.txt");
     addSingleFS(&sfs, "terzo.txt", "test", "test/terzo.txt");
-    delSingleFile(&sfs, "test/secondo.txt");
+    delSingleFS(&sfs, "test/secondo.txt");
 
     while(sfs != NULL) {
         SingleFS *temp = sfs;
@@ -45,7 +45,7 @@ void delFile(const char *filepath) {
     printf("File eliminato con successo!\n");
 }
 
-void delSingleFile(SingleFS **head, const char *filepath) {
+void delSingleFS(SingleFS **head, const char *filepath) {
     if (*head == NULL) {
         return;
     }
