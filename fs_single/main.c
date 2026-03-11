@@ -54,12 +54,14 @@ int main() {
             {&sfs, "quinto.txt", "test", "test/quinto.txt"}
         };
 
-        pthread_t thread[5];
+        const int update = 5;
 
-        for (int i = 0; i < 5; i++) {
+        pthread_t thread[update];
+
+        for (int i = 0; i < update; i++) {
             pthread_create(&thread[i], NULL, threadAdds, &args[i]);
         }
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < update; i++) {
             pthread_join(thread[i], NULL);
         }
 
@@ -68,12 +70,14 @@ int main() {
             {&sfs, "test/quarto.txt"}
         };
 
-        pthread_t del_thread[2];
+        const int deletion = 2;
 
-        for (int i = 0; i < 2; i++) {
+        pthread_t del_thread[deletion];
+
+        for (int i = 0; i < deletion; i++) {
             pthread_create(&del_thread[i], NULL, threadDel, &args_del[i]);
         }
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < deletion; i++) {
             pthread_join(del_thread[i], NULL);
         }
         
