@@ -25,6 +25,8 @@ int main() {
 	} else {
 		printf("Success: file %s created!\n", filename);
 	}
+
+    close(fd);
 	
 	DIR *dir = opendir(dirname);
 	
@@ -38,6 +40,8 @@ int main() {
 	while ((entry = readdir(dir)) != NULL) {
 		printf("%s\n", entry->d_name);
 	}
+
+    closedir(dir);
 	
 	if (unlink(filepath) == -1) {
 		fprintf(stderr, "Error: imposible to delete the file!\n");
