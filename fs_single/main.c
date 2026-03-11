@@ -16,25 +16,62 @@ typedef struct SingleFS {
     struct SingleFS *next;
 } SingleFS;
 
+typedef struct threadArgs {
+    SingleFS **head;
+    char fn[255];
+    char dn[255];
+    char fp[255];
+} threadArgs;
+
+void* threadAdds(void *args);
 void addSingleFS(SingleFS **head, const char *fn, const char *dn, const char *fp);
 void createFile(const char *fn, const char *dn, const char *fp);
 void delSingleFS(SingleFS **head, const char *filename);
 void delFile(const char *filepath);
 
 int main() {
-    SingleFS *sfs = NULL;
-    addSingleFS(&sfs, "test.txt", "test", "test/test.txt");
-    addSingleFS(&sfs, "secondo.txt", "test", "test/secondo.txt");
-    addSingleFS(&sfs, "terzo.txt", "test", "test/terzo.txt");
-    delSingleFS(&sfs, "test/secondo.txt");
+    pid_t pid;
+    pid = fork();
 
-    while(sfs != NULL) {
-        SingleFS *temp = sfs;
-        sfs = sfs->next;
-        free(temp);
+    if (pid < 0) {
+        printf("Errore nel fork!\n");
+        return 0;
+    } else if (pid == 0) {
+        SingleFS *sfs = NULL;
+
+        threadArgs args[] = {
+            {&sfs, "test.txt", "test", "test/test.txt"},
+            {&sfs, "secondo.txt", "test", "test/secondo.txt"},
+            {&sfs, "terzo.txt", "test", "test/terzo.txt"}
+        };
+
+        pthread_t thread[3];
+
+        for (int i = 0; i < 3; i++) {
+            pthread_create(&thread[i], NULL, threadAdds, &args[i]);
+        }
+        for (int i = 0; i < 3; i++) {
+            pthread_join(thread[i], NULL);
+        }
+
+        delSingleFS(&sfs, "test/secondo.txt");
+        while(sfs != NULL) {
+            SingleFS *temp = sfs;
+            sfs = sfs->next;
+            free(temp);
+        }
+        exit(0);
+    } else {
+        wait(NULL);
     }
 
     return 0;
+}
+
+void* threadAdds(void *args) {
+    threadArgs *arg = (threadArgs*)args;
+    addSingleFS(arg->head, arg->fn, arg->dn, arg->fp);
+    pthread_exit(0);
 }
 
 void delFile(const char *filepath) {
@@ -56,6 +93,7 @@ void delSingleFS(SingleFS **head, const char *filepath) {
         delFile(filepath);
         (*head) = (*head)->next;
         free(cur);
+        return;
     }
 
     SingleFS *curr = *head;
