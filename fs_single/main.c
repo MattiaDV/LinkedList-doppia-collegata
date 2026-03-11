@@ -85,6 +85,7 @@ int main() {
         exit(0);
     } else {
         wait(NULL);
+        printf("Processo terminato!\n");
     }
 
     return 0;
