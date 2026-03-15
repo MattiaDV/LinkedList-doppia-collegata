@@ -1,0 +1,36 @@
+plugins {
+    id 'application'
+    id 'java'
+}
+
+repositories {
+    mavenCentral() // Da qui scarichiamo le librerie da internet
+}
+
+// Impostiamo la versione di Java per evitare errori di compilazione
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17) // Usa la 17 o 21 se l'hai installata
+    }
+}
+
+// Definiamo le variabili per scaricare l'ultima versione di LWJGL (OpenGL per Java)
+project.ext.lwjglVersion = "3.3.3"
+project.ext.lwjglNatives = "natives-windows"
+
+dependencies {
+    // 1. Le librerie Java di base di LWJGL
+    implementation "org.lwjgl:lwjgl:${lwjglVersion}"
+    implementation "org.lwjgl:lwjgl-glfw:${lwjglVersion}" // Finestra e input
+    implementation "org.lwjgl:lwjgl-opengl:${lwjglVersion}" // Grafica 3D
+
+    // 2. I file nativi (.dll) scritti in C per Windows, fondamentali per comunicare con la GPU
+    runtimeOnly "org.lwjgl:lwjgl:${lwjglVersion}:${lwjglNatives}"
+    runtimeOnly "org.lwjgl:lwjgl-glfw:${lwjglVersion}:${lwjglNatives}"
+    runtimeOnly "org.lwjgl:lwjgl-opengl:${lwjglVersion}:${lwjglNatives}"
+}
+
+application {
+    // Diciamo a Gradle qual è il file con il "public static void main"
+    mainClass = 'game.App'
+}
