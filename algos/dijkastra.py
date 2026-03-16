@@ -1,47 +1,33 @@
-class Node:
-    def __init__(self, point):
-        self.point = point
-        self.nodes = {}
-        self.queue = []
+citta = {
+    "A": {"B": 20, "C": 10},
+    "B": {"E": 40, "D": 5, "A": 20},
+    "C": {"D": 10, "A": 10},
+    "D": {"E": 5, "B": 5, "C": 10},
+    "E": {"D": 5, "B": 40},
+}
 
-class City:
-    def __init__(self):
-        self.nodes = {}
-    def add_city(self, point):
-        self.nodes[point] = Node(point)
-    def add_road(self, from_city, to_city, distance):
-        self.nodes[from_city].nodes[to_city] = distance
-    def dijkstra(self, start):
-        distances = {node: float("inf") for node in self.nodes}
-        previous = {node: None for node in self.nodes}
-        distances[start] = 0
+def dijkstra(cit: dict, start: str):
+    distances = {n: float('inf') for n in cit.keys()}
+    distances[start] = 0
+    visited = {}
+    visit_order = []
+    current = start
 
-        unvisited = list(self.nodes.keys())
+    while len(visited) < len(cit):
+        visit_order.append(current)
+        road = cit[current]
+        visited[current] = road
 
-        while unvisited:
-            curr = min(unvisited, key=lambda node: distances[node])
-            unvisited.remove(curr)
+        for ne, weight in road.items():
+            new_dist = distances[current] + weight
+            if new_dist < distances[ne]:
+                distances[ne] = new_dist
+        
+        unvisited = [n for n in distances if n not in visited]
+        if unvisited:  # <-- fix: aggiorna solo se ci sono ancora nodi
+            current = min(unvisited, key=lambda n: distances[n])
+    
+    print(distances)
+    print(visit_order)
 
-            for neighbor, weight in self.nodes[curr].nodes.items():
-                if neighbor in unvisited:
-                    new_dist = distances[curr] + weight
-                    if new_dist < distances[neighbor]:
-                        distances[neighbor] = new_dist
-                        previous[neighbor] = curr
-
-        return distances, previous
-
-citta = City()
-citta.add_city("A")
-citta.add_city("B")
-citta.add_city("C")
-citta.add_city("D")
-citta.add_city("E")
-
-citta.add_road("A", "B", 20)
-citta.add_road("A", "C", 10)
-citta.add_road("B", "E", 40)
-citta.add_road("B", "D", 5)
-citta.add_road("C", "D", 10)
-citta.add_road("D", "E", 5)
-print(citta.dijkstra("A"))
+dijkstra(citta, "A")
